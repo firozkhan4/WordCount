@@ -1,6 +1,6 @@
 import java.io.File;
-import java.io.IOException;
-import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -9,42 +9,31 @@ public class App {
             return;
         }
 
-        File file = new File(args[0]);
+        int numberOfThreads = Runtime.getRuntime().availableProcessors();
+        ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
 
-        if (!file.exists() || !file.isFile()) {
-            System.err.println("Invalid File Path: " + args[0]);
-            return;
+        for (var filePath : args) {
+
+            File file = new File(filePath);
+
+            if (!FileValidator.isValidFile(file)) {
+                System.err.println("Invalid File Path: " + filePath);
+                continue;
+            }
+
+            executor.submit(() -> {
+                processFile(file);
+            });
+
         }
 
-        System.out.println("Processing file: " + args[0]);
-        processFile(file);
+        executor.shutdown();
     }
 
     public static void processFile(File file) {
-        WordCount wc = new WordCount();
-
-        try (Scanner reader = new Scanner(file)) {
-
-            while (reader.hasNextLine()) {
-                String line = reader.nextLine();
-                wc.count(line);
-            }
-        } catch (IOException e) {
-            System.err.println("Something went wrong: " + e.getMessage());
-        }
-
-        showResult(file, wc.getCount());
-    }
-
-    public static void showResult(File file, Count result) {
-
-        System.out.println("Results for file: " + file.getName());
-        System.out.println("Line Count: " + result.getLineCount());
-        System.out.println("Word Count: " + result.getWordCount());
-        System.out.println("Character Count (with spaces): " + result.getCharacterCount());
-        System.out.println("Character Count (without spaces): " + result.getCharacterCountWithoutSpace());
-        System.out.println("Byte Count (UTF-8): " + result.getByteCount());
-        System.out.println();
+        FileProcessor fileProcessor = new FileProcessor();
+        Count result = fileProcessor.processFile(file);
+        ResultDisplay.showResult(file, result);
     }
 
 }
