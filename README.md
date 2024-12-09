@@ -1,4 +1,4 @@
-# Word Count Project
+# Word Count
 
 This is a **Word Count Tool** developed in **Java**, designed for efficient and accurate text analysis. The tool supports processing multiple files and leverages multithreading for optimized performance. It provides detailed counts of words, lines, characters, and bytes for UTF-8 encoding.
 
@@ -35,7 +35,7 @@ This is a **Word Count Tool** developed in **Java**, designed for efficient and 
 ### 1. **Clone the Repository:**
 
 ```bash
-git clone https://github.com/firozkhan4/word-count.git
+git clone https://github.com/firozkhan4/WordCount.git
 cd WordCount
 ```
 
